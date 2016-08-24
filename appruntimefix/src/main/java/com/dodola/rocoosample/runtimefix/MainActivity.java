@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 HelloHack hacks = new HelloHack();
+                //不用重启app,是因为initPathFromAssetsRuntime 放到了后面做?
                 RocooFix.initPathFromAssetsRuntime(MainActivity.this, "patch.jar");
                 HelloHack hack1 = new HelloHack();
                 Toast.makeText(MainActivity.this, hack1.showHello(), Toast.LENGTH_SHORT).show();

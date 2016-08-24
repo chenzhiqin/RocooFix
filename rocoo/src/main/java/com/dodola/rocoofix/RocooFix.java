@@ -106,6 +106,7 @@ public final class RocooFix {
 //            //art虚拟机走另外一套fix
 //            return;
 //        }
+        Log.i(TAG,"applyPatch dexPath:"+dexPath);
 
         try {
             ApplicationInfo applicationInfo = getApplicationInfo(context);
@@ -147,6 +148,7 @@ public final class RocooFix {
                 List<File> files = new ArrayList<File>();
                 files.add(new File(dexPath));
                 File dexDir = getDexDir(context, applicationInfo);
+                Log.i(TAG,"applyPatch dexDir"+ dexDir);
                 installDexes(loader, dexDir, files);
             }
 
@@ -248,15 +250,24 @@ public final class RocooFix {
 
             Field pathListField = RocooUtils.findField(loader, "pathList");
             Object dexPathList = pathListField.get(loader);
+            Log.i(TAG,"v23 dexPathList:" + dexPathList.toString());
             Field dexElement = RocooUtils.findField(dexPathList, "dexElements");
             Class<?> elementType = dexElement.getType().getComponentType();
+            Log.i(TAG,"v23 elementType:" + elementType.getName());
+
+            // 这部分代码不用反射呀
             Method loadDex = RocooUtils.findMethod(dexPathList, "loadDexFile", File.class, File.class);
             loadDex.setAccessible(true);
-
             Object dex = loadDex.invoke(null, additionalClassPathEntries.get(0), optimizedDirectory);
+
+            Log.i(TAG,"v23 dex:" + dex.toString());
+
+
+            // new Element
             Constructor<?> constructor = elementType.getConstructor(File.class, boolean.class, File.class, DexFile.class);
             constructor.setAccessible(true);
             Object element = constructor.newInstance(new File(""), false, additionalClassPathEntries.get(0), dex);
+            Log.i(TAG,"v23 element :" + element);
 
             Object[] newEles = new Object[1];
             newEles[0] = element;
@@ -488,6 +499,7 @@ public final class RocooFix {
         } else {
             context = context.getApplicationContext();
         }
+        Log.i(TAG, "applyPatchRuntime,dexPath:" + dexPath);
 
         try {
             File file = new File(dexPath);

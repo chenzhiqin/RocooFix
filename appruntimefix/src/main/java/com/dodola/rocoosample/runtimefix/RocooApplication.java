@@ -15,7 +15,8 @@ public class RocooApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        //打补丁
+        // 打补丁,init的都是在application attach的时候,加载另一个dex.
+        // 防止被打上CLASS_ISPREVERIFIED
         RocooFix.init(this);
     }
 }
